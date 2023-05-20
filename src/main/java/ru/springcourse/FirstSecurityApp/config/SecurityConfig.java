@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import ru.springcourse.FirstSecurityApp.services.PersonDetailsService;
 
 
@@ -22,10 +23,32 @@ public class SecurityConfig {
         this.personDetailsService = personDetailsService;
     }
 
+    // конфигурируем сам Spring Security
+    // конфигурируем авторизацию
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(personDetailsService).and().build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable() // отключаем защиту от межсайтовой подделки запросов
+                .authorizeHttpRequests() // все входящие запросы будут проходить авторизацию
+                .requestMatchers("/auth/login", "/error").permitAll() // на какие страницы пускаем всех
+                .anyRequest().authenticated() // для всех других запросов нужна аутентификация
+                .and()
+                .formLogin().loginPage("/auth/login") // настраиваем форму для входа
+                .loginProcessingUrl("/process_login") // передаём адрес, куда мы будем отправлять данные с формы
+                .defaultSuccessUrl("/hello", true) // куда перенаправить после логина
+                .failureUrl("/auth/login?error"); // куда перенаправить в случае неудачи(с параметром error)
+
+        return http.build();
+    }
+
+    //настраиваем аутентификацию
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(personDetailsService)
+                .passwordEncoder(getPasswordEncoder())
+                .and()
+                .build();
     }
 
     @Bean
