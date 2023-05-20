@@ -36,7 +36,9 @@ public class SecurityConfig {
                 .formLogin().loginPage("/auth/login") // настраиваем форму для входа
                 .loginProcessingUrl("/process_login") // передаём адрес, куда мы будем отправлять данные с формы
                 .defaultSuccessUrl("/hello", true) // куда перенаправить после логина
-                .failureUrl("/auth/login?error"); // куда перенаправить в случае неудачи(с параметром error)
+                .failureUrl("/auth/login?error") // куда перенаправить в случае неудачи(с параметром error)
+                .and()
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/auth/login"); // делаем logout и переводим его на страницу
 
         return http.build();
     }
