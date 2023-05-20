@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 .csrf().disable() // отключаем защиту от межсайтовой подделки запросов
                 .authorizeHttpRequests() // все входящие запросы будут проходить авторизацию
-                .requestMatchers("/auth/login", "/error").permitAll() // на какие страницы пускаем всех
+                .requestMatchers("/auth/login", "/error", "/auth/registration").permitAll() // на какие страницы пускаем всех
                 .anyRequest().authenticated() // для всех других запросов нужна аутентификация
                 .and()
                 .formLogin().loginPage("/auth/login") // настраиваем форму для входа
