@@ -29,7 +29,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // отключаем защиту от межсайтовой подделки запросов
                 .authorizeHttpRequests() // все входящие запросы будут проходить авторизацию
                 .requestMatchers("/auth/login", "/error", "/auth/registration").permitAll() // на какие страницы пускаем всех
                 .anyRequest().authenticated() // для всех других запросов нужна аутентификация
