@@ -30,8 +30,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests() // все входящие запросы будут проходить авторизацию
+                .requestMatchers("/admin").hasRole("ADMIN")
                 .requestMatchers("/auth/login", "/error", "/auth/registration").permitAll() // на какие страницы пускаем всех
-                .anyRequest().authenticated() // для всех других запросов нужна аутентификация
+                .anyRequest().hasAnyRole("USER", "ADMIN")
                 .and()
                 .formLogin().loginPage("/auth/login") // настраиваем форму для входа
                 .loginProcessingUrl("/process_login") // передаём адрес, куда мы будем отправлять данные с формы
